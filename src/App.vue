@@ -1,5 +1,5 @@
 <script setup>
-    import {ref, reactive} from 'vue'
+    import {ref, reactive, onMounted, watch} from 'vue'
     import {uid} from 'uid'
     import Header from './components/Header.vue';
     import Form from './components/Form.vue';
@@ -16,6 +16,24 @@
         patientDischarge: '',
         symptoms: ''
     })
+
+    watch(pets, () => {
+        saveInLocalStorage()
+    },{
+        deep: true
+    })
+
+    onMounted(() => {
+        const petsFromLocalStorage = localStorage.getItem('pets')
+        if(petsFromLocalStorage){
+            pets.value = JSON.parse(petsFromLocalStorage)
+        }
+
+    })
+
+    const saveInLocalStorage = () => {
+        localStorage.setItem('pets', JSON.stringify(pets.value))
+    }
 
     const savePet =  () => {
         if(pet.id){
@@ -42,6 +60,10 @@
     const loadPet = (id) => {
         const toEdit = pets.value.filter(p => p.id === id)[0]
         Object.assign(pet, toEdit)
+    }
+
+    const deletePet = (id) => {
+        pets.value = pets.value.filter(pet => pet.id !== id)
     }
     
 </script>
@@ -74,6 +96,7 @@
                         v-for="p in pets"
                         :p="p"
                         @load-pet="loadPet"
+                        @delete-pet="deletePet"
                     />
                 </div>
                 <p v-else class="mt-20 text-2xl text-center">No hay pacientes</p>
