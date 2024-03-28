@@ -18,15 +18,30 @@
     })
 
     const savePet =  () => {
-        pets.value.push({
-            ...pet,
-            id : uid()
+        if(pet.id){
+            const {id} = pet
+            const i = pets.value.findIndex((value, index) => value.id === id)
+            pets.value[i] = {...pet}
+        }else{
+            console.log("nuevo")
+            pets.value.push({
+                ...pet,
+                id : uid()
+            })
+        }
+        Object.assign(pet, {
+            name : '',
+            owner : '',
+            email : '',
+            patientDischarge : '',
+            symptoms : '',
+            id: null
         })
-        pet.name = ''
-        pet.owner = ''
-        pet.email = ''
-        pet.patientDischarge = ''
-        pet.symptoms = ''
+    }
+
+    const loadPet = (id) => {
+        const toEdit = pets.value.filter(p => p.id === id)[0]
+        Object.assign(pet, toEdit)
     }
     
 </script>
@@ -43,6 +58,8 @@
                 v-model:patientDischarge="pet.patientDischarge"
                 v-model:symptoms="pet.symptoms"
                 @save-pet="savePet"
+                v-bind:id="pet.id"
+                
              />
 
             <div class="md:w-1/2 md:h-screen overflow-y-scroll">
@@ -56,6 +73,7 @@
                     <Pet
                         v-for="p in pets"
                         :p="p"
+                        @load-pet="loadPet"
                     />
                 </div>
                 <p v-else class="mt-20 text-2xl text-center">No hay pacientes</p>

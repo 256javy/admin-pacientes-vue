@@ -1,8 +1,12 @@
 <script setup>
-    import {reactive} from 'vue'
+    import {computed, reactive} from 'vue'
     import Alert from './Alert.vue'
 
     const props = defineProps({
+        id : {
+            type: [String, null],
+            required: true
+        },
         name : {
             type: String,
             required: true
@@ -56,6 +60,8 @@
         }, 3000)
         
     }
+
+    const editing = computed(() => props.id)
 
 </script>
 
@@ -144,7 +150,7 @@
             <input 
                 type="submit" 
                 class="bg-indigo-600 w-full p-3 text-white uppercase font-bold rounded-md hover:bg-indigo-700 cursor-pointer transition-colors"
-                value="Registrar Paciente"
+                v-bind:value="[editing ? 'Guardar Cambios' : 'Registrar Paciente']"
                 >
 
         </form>
