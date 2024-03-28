@@ -1,17 +1,60 @@
 <script setup>
     import {reactive} from 'vue'
+    import Alert from './Alert.vue'
 
-    const pet = reactive({
-        name : '',
-        owner: '',
-        email: '',
-        patientDischarge: '',
-        symptoms: ''
+    const props = defineProps({
+        name : {
+            type: String,
+            required: true
+        },
+        owner : {
+            type: String,
+            required: true
+        },
+        email : {
+            type: String,
+            required: true
+        },
+        patientDischarge : {
+            type: String,
+            required: true
+        },
+        symptoms : {
+            type: String,
+            required: true
+        },
     })
 
+    const emit = defineEmits([
+        'update:name',
+        'update:owner',
+        'update:email',
+        'update:patientDischarge',
+        'update:symptoms',
+        'save-pet'
+    ])
+
+    const customAlert = reactive({
+        type: '',
+        message: '',
+    })
+
+
+
     const validate = (e) =>{
+        if(Object.values(props).includes('')){
+            customAlert.message = "Todos los campos son requeridos"
+            customAlert.type = 'error'
+            
+        } else {
+            customAlert.message = "Gaurdado correctamente"
+            customAlert.type = 'success'
+            emit('save-pet')
+        }
+        setTimeout( () => {
+            customAlert.message = ''
+        }, 3000)
         
-        console.log(window)
     }
 
 </script>
@@ -24,6 +67,11 @@
             Añade Pacientes y
             <span class="font-bold text-indigo-600">Adminístralos</span>
         </p>
+
+        <Alert
+            v-if="customAlert.message"
+            v-bind:customAlert="customAlert"
+        />
 
         <form 
             class="bg-white shadow-md rounded-lg py-10 px-5 mb-10"
@@ -38,7 +86,8 @@
                     id="name" 
                     placeholder="Nombre de la mascota"
                     class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
-                    v-model="pet.name"
+                    v-bind:value="name"
+                    @input="$emit('update:name', $event.target.value)"
                 >
             </div>
             <div class="mb-5">
@@ -50,7 +99,8 @@
                     id="owner" 
                     placeholder="Nombre del Propietario"
                     class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
-                    v-model="pet.owner"
+                    v-bind:value="owner"
+                    @input="$emit('update:owner', $event.target.value)"
                 >
             </div>
             <div class="mb-5">
@@ -62,7 +112,8 @@
                     id="email" 
                     placeholder="Email del Propietario"
                     class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
-                    v-model="pet.email"
+                    v-bind:value="email"
+                    @input="$emit('update:email', $event.target.value)"
                 >
             </div>
             <div class="mb-5">
@@ -73,7 +124,8 @@
                     type="date" 
                     id="patientDischarge" 
                     class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
-                    v-model="pet.patientDischarge"
+                    v-bind:value="patientDischarge"
+                    @input="$emit('update:patientDischarge', $event.target.value)"
                 >
             </div>
             <div class="mb-5">
@@ -84,9 +136,9 @@
                     id="symptoms" 
                     placeholder="Describe los Síntomas"
                     class="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md h-40"
-                    v-model="pet.symptoms"
-                >
-                </textarea>
+                    v-bind:value="symptoms"
+                    @input="$emit('update:symptoms', $event.target.value)"
+                ></textarea>
             </div>
 
             <input 
